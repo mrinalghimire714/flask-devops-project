@@ -37,15 +37,16 @@ class Entry(db.Model):
             'comment': self.comment
         }
 
-
-@app.before_first_request
 def setup():
     # Configure application logger
     app.logger.addHandler(handler)
     app.logger.setLevel(log_level)
-    # Bootstrapping database schema
-    db.create_all()
 
+    # Bootstrapping database schema
+    with app.app_context():
+        db.create_all()
+
+setup()
 
 @requestid
 @app.route('/api/v1/entries', methods=['GET'])
